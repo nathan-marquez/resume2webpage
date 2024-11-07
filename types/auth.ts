@@ -2,6 +2,7 @@ export interface User {
   email: string;
   editsRemaining: number;
   totalEdits: number;
+  resumeUploaded: boolean;
 }
 
 export interface AuthResponse {

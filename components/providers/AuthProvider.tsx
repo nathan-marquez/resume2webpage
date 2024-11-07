@@ -2,15 +2,20 @@
 
 import { createContext, useContext, useState } from "react";
 import { User, AuthResponse } from "@/types/auth";
+import {
+  login as loginApi,
+  register as registerApi,
+  logout as logoutApi,
+} from "@/lib/auth";
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  hasUploadedResume: boolean;
-  setHasUploadedResume: (value: boolean) => void;
-  decrementEdits: () => Promise<void>;
+  hasUploadedResume: boolean; // TODO: This should be removed later
+  setHasUploadedResume: (value: boolean) => void; // TODO: This should be removed later
+  decrementEdits: () => Promise<void>; // TODO: This should be removed later
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,19 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Authentication failed");
-      }
+      const data: AuthResponse = await loginApi(email, password);
 
       setUser(data.user);
       localStorage.setItem("token", data.token);
@@ -45,19 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (email: string, password: string) => {
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const data: AuthResponse = await registerApi(email, password);
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error);
-      }
-
-      const data: AuthResponse = await response.json();
-      console.log("Registration data:", response);
       setUser(data.user);
       localStorage.setItem("token", data.token);
     } catch (error) {
@@ -72,16 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const token = localStorage.getItem("token");
 
       // Call logout endpoint
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Logout failed");
-      }
+      await logoutApi(token);
 
       // Clear local state
       setUser(null);
@@ -98,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // This should be removed later
   const decrementEdits = async () => {
     if (user?.editsRemaining && user.editsRemaining > 0) {
       setUser({
