@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from "react";
 import { AuthMode } from "@/types/auth";
-import { AuthModal } from "@/components/modals/auth-modal";
+import { AuthModal } from "@/components/modals/AuthModal";
 
 interface AuthModalContextType {
   showAuthModal: (mode: AuthMode, redirectToEditor?: boolean) => void;

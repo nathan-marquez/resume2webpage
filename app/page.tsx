@@ -1,4 +1,4 @@
-import { UploadZone } from "@/components/home/upload-zone";
+import { UploadZone } from "@/components/home/UploadZone";
 import { Button } from "@/components/ui/button";
 import {
   Wand2,

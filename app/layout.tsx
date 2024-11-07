@@ -1,12 +1,12 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
-import { Navigation } from "@/components/navigation";
-import { Footer } from "@/components/footer";
-import { AuthProvider } from "@/components/providers/auth-provider";
-import { AuthModalProvider } from "@/components/providers/modals/auth-modal-provider";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { AuthModalProvider } from "@/components/providers/modals/AuthModalProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 

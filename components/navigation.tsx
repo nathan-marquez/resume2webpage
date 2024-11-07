@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useAuthModal } from "@/components/providers/modals/auth-modal-provider";
+import { useAuthModal } from "@/components/providers/modals/AuthModalProvider";
 import { useState } from "react";
-import { useAuth } from "@/components/providers/auth-provider";
+import { useAuth } from "@/components/providers/AuthProvider";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -22,7 +22,7 @@ import {
   Edit3,
   Sparkles,
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/useToast";
 import { ComingSoonModal } from "@/components/modals/coming-soon-modal";
 import { AuthMode } from "@/types/auth";
 

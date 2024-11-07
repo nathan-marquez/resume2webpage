@@ -5,8 +5,8 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
-import { ChatInterface } from "@/components/editor/chat-interface";
-import { PreviewPanel } from "@/components/editor/preview-panel";
+import { ChatInterface } from "@/components/editor/ChatInterface";
+import { PreviewPanel } from "@/components/editor/PreviewPanel";
 
 export default function EditorPage() {
   return (
