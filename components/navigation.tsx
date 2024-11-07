@@ -23,7 +23,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
-import { ComingSoonModal } from "@/components/modals/coming-soon-modal";
+import { ComingSoonModal } from "@/components/modals/ComingSoonModal";
 import { AuthMode } from "@/types/auth";
 
 export function Navigation() {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, Code2, Download, RotateCcw } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ResetConfirmModal } from "@/components/modals/reset-confirm-modal";
+import { ResetConfirmModal } from "@/components/modals/ResetConfirmModal";
 
 interface PreviewFile {
   name: string;

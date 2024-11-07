@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { EditLimitModal } from "@/components/modals/edit-limit-modal";
+import { EditLimitModal } from "@/components/modals/EditLimitModal";
 
 interface Message {
   role: "user" | "assistant";
