@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/components/providers/auth-provider";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useToast } from "@/hooks/useToast";
 import {
   Dialog,
   DialogContent,

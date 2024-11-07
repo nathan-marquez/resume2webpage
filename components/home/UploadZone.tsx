@@ -6,8 +6,8 @@ import { FileUp, File, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/components/providers/auth-provider";
-import { useAuthModal } from "@/components/providers/modals/auth-modal-provider";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useAuthModal } from "@/components/providers/modals/AuthModalProvider";
 
 import { AuthMode } from "@/types/auth";
 
