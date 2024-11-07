@@ -31,11 +31,11 @@ export function Navigation() {
   const { showAuthModal } = useAuthModal();
   const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.LOGIN);
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
-  const { user, logout, hasUploadedResume } = useAuth();
+  const { user, logout } = useAuth();
   const { toast } = useToast();
 
   const handleEditorClick = (e: React.MouseEvent) => {
-    if (!hasUploadedResume) {
+    if (!user?.resumeUploaded) {
       e.preventDefault();
       toast({
         title: "Upload Required",

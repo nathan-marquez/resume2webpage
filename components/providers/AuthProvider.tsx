@@ -13,7 +13,6 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  hasUploadedResume: boolean; // TODO: This should be removed later
   setHasUploadedResume: (value: boolean) => void; // TODO: This should be removed later
   decrementEdits: () => Promise<void>; // TODO: This should be removed later
 }
@@ -22,7 +21,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [hasUploadedResume, setHasUploadedResume] = useState(false);
 
   const login = async (email: string, password: string) => {
     try {
@@ -58,7 +56,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Clear local state
       setUser(null);
-      setHasUploadedResume(false);
 
       // Remove token from localStorage
       localStorage.removeItem("token");
@@ -66,8 +63,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Logout error:", error);
       // Still clear local state even if API call fails
       setUser(null);
-      setHasUploadedResume(false);
       localStorage.removeItem("token");
+    }
+  };
+
+  const setHasUploadedResume = (value: boolean) => {
+    if (user) {
+      setUser({ ...user, resumeUploaded: value });
     }
   };
 
@@ -88,7 +90,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         logout,
-        hasUploadedResume,
         setHasUploadedResume,
         decrementEdits,
       }}

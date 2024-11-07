@@ -8,12 +8,11 @@ const mockUsers = [
     password: "password123",
     editsRemaining: 5,
     totalEdits: 5,
+    resumeUploaded: false,
   },
 ];
 
 export async function POST(request: Request) {
-  console.log("🔵 Login route hit");
-
   // Ensure the request is a POST
   if (request.method !== "POST") {
     return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
@@ -28,9 +27,6 @@ export async function POST(request: Request) {
       console.error("Failed to parse JSON:", e);
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
-
-    console.log("📦 Request body:", body);
-
     const { email, password } = body;
 
     // Validate input
@@ -43,10 +39,8 @@ export async function POST(request: Request) {
 
     // Find user
     const user = mockUsers.find((u) => u.email === email);
-    console.log("🔍 Found user:", user ? "Yes" : "No");
 
     if (!user || user.password !== password) {
-      console.log("❌ Authentication failed: Invalid credentials");
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 }
@@ -58,11 +52,10 @@ export async function POST(request: Request) {
         email: user.email,
         editsRemaining: user.editsRemaining,
         totalEdits: user.totalEdits,
+        resumeUploaded: user.resumeUploaded,
       },
       token: "mock_jwt_token",
     };
-
-    console.log("✅ Authentication successful:", response);
 
     return NextResponse.json(response);
   } catch (error) {
