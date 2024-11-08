@@ -10,6 +10,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useAuthModal } from "@/components/providers/modals/AuthModalProvider";
 
 import { AuthMode } from "@/types/auth";
+import { uploadResume } from "@/lib/resume";
 
 export function UploadZone() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export function UploadZone() {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const { showAuthModal } = useAuthModal();
-  const { user, setHasUploadedResume } = useAuth();
+  const { user, setHasUploadedResume } = useAuth(); //TODO: Remove setHasUploadedResume
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -28,17 +29,30 @@ export function UploadZone() {
     setIsDragging(false);
   };
 
-  const simulateUpload = async () => {
-    setIsUploading(true);
-    for (let i = 0; i <= 100; i += 10) {
-      setProgress(i);
-      await new Promise((resolve) => setTimeout(resolve, 200));
+  const handleFileUpload = async (file: File) => {
+    if (file.type !== "application/pdf") {
+      // TODO: Add proper error handling/notification
+      console.error("Please upload a PDF file");
+      return;
     }
-    setHasUploadedResume(true);
-    if (!user) {
-      showAuthModal(AuthMode.LOGIN, true); // true to redirect to editor after login
-    } else {
-      router.push("/editor");
+
+    try {
+      setIsUploading(true);
+      await uploadResume(file, (progress) => {
+        setProgress(progress);
+      });
+
+      setHasUploadedResume(true);
+      if (!user) {
+        showAuthModal(AuthMode.LOGIN, true);
+      } else {
+        router.push("/editor");
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      // TODO: Add proper error handling/notification
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -46,15 +60,15 @@ export function UploadZone() {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
-    if (file && file.type === "application/pdf") {
-      await simulateUpload();
+    if (file) {
+      await handleFileUpload(file);
     }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type === "application/pdf") {
-      await simulateUpload();
+    if (file) {
+      await handleFileUpload(file);
     }
   };
 
