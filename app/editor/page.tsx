@@ -9,13 +9,13 @@ import {
 import { ChatInterface } from "@/components/editor/ChatInterface";
 import { PreviewPanel } from "@/components/editor/PreviewPanel";
 import { ProjectFile } from "@/types/project";
-import { getProjectFiles } from "@/lib/project";
+import { getProject } from "@/lib/project";
 
 export default function EditorPage() {
   const [files, setFiles] = useState<ProjectFile[] | null>(null);
 
   useEffect(() => {
-    const files = getProjectFiles();
+    const files = getProject();
     if (files && files.length > 0) setFiles(files);
   }, []);
 

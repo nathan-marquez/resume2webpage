@@ -6,7 +6,7 @@ import { Eye, Code2, Download, RotateCcw } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResetConfirmModal } from "@/components/modals/ResetConfirmModal";
 import { ProjectFile } from "@/types/project";
-import { getProjectFiles } from "@/lib/project";
+import { getProject } from "@/lib/project";
 
 interface PreviewPanelProps {
   files: ProjectFile[] | null;
@@ -19,7 +19,7 @@ export function PreviewPanel({ files }: PreviewPanelProps) {
   const [activeFile, setActiveFile] = useState<ProjectFile | null>(null);
 
   useEffect(() => {
-    const files = getProjectFiles();
+    const files = getProject();
     if (files && files.length > 0) setActiveFile(files[0]);
   }, [files]);
 

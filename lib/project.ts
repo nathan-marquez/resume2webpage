@@ -303,6 +303,6 @@ footer {
   },
 ];
 
-export const getProjectFiles = (): WebpageFile[] => {
+export const getProject = (): ProjectFile[] => {
   return INITIAL_FILES;
 };

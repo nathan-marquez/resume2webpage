@@ -12,8 +12,11 @@ interface Message {
   role: "user" | "assistant";
   content: string;
 }
+interface ChatInterfaceProps {
+  setFiles: (files: any) => void;
+}
 
-export function ChatInterface() {
+export function ChatInterface({ setFiles }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
