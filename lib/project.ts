@@ -1,9 +1,11 @@
-import { ProjectFile } from "@/types/project";
+import { Project } from "@/types/project";
 
-const INITIAL_FILES: ProjectFile[] = [
-  {
-    name: "index.html",
-    content: `<!DOCTYPE html>
+const PROJECT: Project = {
+  id: "1",
+  uploadingFlag: false,
+  deletingFlag: false,
+  editingFlag: false,
+  htmlFile: `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -62,11 +64,7 @@ const INITIAL_FILES: ProjectFile[] = [
   </footer>
 </body>
 </html>`,
-    language: "html",
-  },
-  {
-    name: "styles.css",
-    content: `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  cssFile: `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   --primary: #2563eb;
@@ -246,11 +244,7 @@ footer {
       transform: translateY(0);
   }
 }`,
-    language: "css",
-  },
-  {
-    name: "main.js",
-    content: `document.addEventListener('DOMContentLoaded', () => {
+  jsFile: `document.addEventListener('DOMContentLoaded', () => {
   // Smooth scroll for navigation links
   document.querySelectorAll('nav a').forEach(link => {
       link.addEventListener('click', (e) => {
@@ -299,10 +293,8 @@ footer {
 
   setTimeout(typeWriter, 1000);
 });`,
-    language: "javascript",
-  },
-];
+};
 
-export const getProject = (): ProjectFile[] => {
-  return INITIAL_FILES;
+export const getProject = (): Project => {
+  return PROJECT;
 };

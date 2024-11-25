@@ -3,23 +3,30 @@
 import { useState, useEffect } from "react";
 import { ChatInterface } from "@/components/editor/ChatInterface";
 import { PreviewPanel } from "@/components/editor/PreviewPanel";
-import { ProjectFile } from "@/types/project";
+import { Project } from "@/types/project";
 import { getProject } from "@/lib/project";
 
 export default function EditorPage() {
-  const [files, setFiles] = useState<ProjectFile[] | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
 
   useEffect(() => {
-    const files = getProject();
-    if (files && files.length > 0) setFiles(files);
+    const project = getProject();
+    if (project && project.cssFile && project.jsFile && project.htmlFile)
+      setProject(project);
   }, []);
 
   return (
     <div className="h-[calc(100vh-4rem)] relative">
-      <PreviewPanel files={files} />
-      <div className="absolute bottom-4 right-4 w-[400px]">
-        <ChatInterface setFiles={setFiles} />
-      </div>
+      {project ? (
+        <>
+          <PreviewPanel project={project} />
+          <div className="absolute bottom-4 right-4 w-[400px]">
+            <ChatInterface setProject={setProject} />
+          </div>
+        </>
+      ) : (
+        <> </>
+      )}
     </div>
   );
 }

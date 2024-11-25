@@ -1,5 +1,9 @@
-export interface ProjectFile {
-  name: string;
-  content: string;
-  language: string;
+export interface Project {
+  id: string;
+  uploadingFlag: boolean;
+  deletingFlag: boolean;
+  editingFlag: boolean;
+  cssFile: string | null;
+  htmlFile: string | null;
+  jsFile: string | null;
 }

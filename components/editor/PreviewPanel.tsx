@@ -5,23 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Eye, Code2, Download, RotateCcw } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResetConfirmModal } from "@/components/modals/ResetConfirmModal";
-import { ProjectFile } from "@/types/project";
+import { Project } from "@/types/project";
 import { getProject } from "@/lib/project";
 
 interface PreviewPanelProps {
-  files: ProjectFile[] | null;
+  project: Project;
 }
 
-export function PreviewPanel({ files }: PreviewPanelProps) {
+export function PreviewPanel({ project }: PreviewPanelProps) {
   const [showResetModal, setShowResetModal] = useState(false);
 
   const [activeTab, setActiveTab] = useState("preview");
-  const [activeFile, setActiveFile] = useState<ProjectFile | null>(null);
+  const [activeFile, setActiveFile] = useState<string | null>(null);
 
   useEffect(() => {
-    const files = getProject();
-    if (files && files.length > 0) setActiveFile(files[0]);
-  }, [files]);
+    const project = getProject();
+    if (project.htmlFile && project.htmlFile && project.htmlFile)
+      setActiveFile(project.htmlFile);
+  }, [project]);
 
   return (
     <div className="flex h-full flex-col">
@@ -55,7 +56,7 @@ export function PreviewPanel({ files }: PreviewPanelProps) {
             </div>
           </div>
           <TabsContent value="preview" className="mt-0">
-            {activeFile && files ? (
+            {activeFile && project ? (
               <div className="mt-4 border rounded-lg overflow-hidden bg-white">
                 <div className="border-b px-4 py-2 bg-gray-50 flex items-center space-x-2">
                   <div className="flex space-x-1">
@@ -68,7 +69,7 @@ export function PreviewPanel({ files }: PreviewPanelProps) {
                   </div>
                 </div>
                 <iframe
-                  srcDoc={`${files[0].content}<style>${files[1].content}</style><script>${files[2].content}</script>`}
+                  srcDoc={`${project.htmlFile}<style>${project.cssFile}</style><script>${project.jsFile}</script>`}
                   className="w-full h-[calc(100vh-16rem)] border-0"
                   title="Website Preview"
                 />
@@ -76,28 +77,48 @@ export function PreviewPanel({ files }: PreviewPanelProps) {
             ) : null}
           </TabsContent>
           <TabsContent value="code" className="mt-0">
-            {activeFile && files ? (
+            {activeFile && project ? (
               <div className="mt-4 flex h-[calc(100vh-16rem)]">
                 <div className="w-48 border-r">
                   <div className="p-2">
-                    {files.map((file) => (
-                      <button
-                        key={file.name}
-                        onClick={() => setActiveFile(file)}
-                        className={`w-full text-left px-3 py-2 rounded text-sm ${
-                          activeFile.name === file.name
-                            ? "bg-blue-50 text-blue-600"
-                            : "hover:bg-gray-100"
-                        }`}
-                      >
-                        {file.name}
-                      </button>
-                    ))}
+                    <button
+                      key={"html"}
+                      onClick={() => setActiveFile(project.htmlFile)}
+                      className={`w-full text-left px-3 py-2 rounded text-sm ${
+                        activeFile === "html"
+                          ? "bg-blue-50 text-blue-600"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      {"html"}
+                    </button>
+                    <button
+                      key={"css"}
+                      onClick={() => setActiveFile(project.cssFile)}
+                      className={`w-full text-left px-3 py-2 rounded text-sm ${
+                        activeFile === "css"
+                          ? "bg-blue-50 text-blue-600"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      {"css"}
+                    </button>
+                    <button
+                      key={"js"}
+                      onClick={() => setActiveFile(project.jsFile)}
+                      className={`w-full text-left px-3 py-2 rounded text-sm ${
+                        activeFile === "js"
+                          ? "bg-blue-50 text-blue-600"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      {"js"}
+                    </button>
                   </div>
                 </div>
                 <div className="flex-1 p-4 bg-gray-50">
                   <pre className="text-sm">
-                    <code>{activeFile.content}</code>
+                    <code>{activeFile}</code>
                   </pre>
                 </div>
               </div>

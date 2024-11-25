@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { EditLimitModal } from "@/components/modals/EditLimitModal";
+import { Project } from "@/types/project";
 
 interface ChatInterfaceProps {
-  setFiles: (files: any) => void;
+  setProject: (project: Project) => void;
 }
 
-export function ChatInterface({ setFiles }: ChatInterfaceProps) {
+export function ChatInterface({ setProject }: ChatInterfaceProps) {
   const [input, setInput] = useState("");
   const [showEditLimitModal, setShowEditLimitModal] = useState(false);
   const { user, decrementEdits } = useAuth();
