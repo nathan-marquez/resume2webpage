@@ -2,6 +2,7 @@ import { Project } from "@/types/project";
 
 const PROJECT: Project = {
   id: "1",
+  editCount: 5,
   uploadingFlag: false,
   deletingFlag: false,
   editingFlag: false,
@@ -295,6 +296,21 @@ footer {
 });`,
 };
 
-export const getProject = (): Project => {
-  return PROJECT;
+//TODO: Add error case
+export const getProject = (): Promise<Project> => {
+  // Simulate API request
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(PROJECT);
+    }, 1000);
+  });
+};
+
+export const editProject = async (editText: string): Promise<Project> => {
+  // Simulate API request
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(PROJECT);
+    }, 1000);
+  });
 };

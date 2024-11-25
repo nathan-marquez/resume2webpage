@@ -19,9 +19,11 @@ export function PreviewPanel({ project }: PreviewPanelProps) {
   const [activeFile, setActiveFile] = useState<string | null>(null);
 
   useEffect(() => {
-    const project = getProject();
-    if (project.htmlFile && project.htmlFile && project.htmlFile)
-      setActiveFile(project.htmlFile);
+    const fetchProject = async () => {
+      const project = await getProject();
+      if (project.htmlFile) setActiveFile(project.htmlFile);
+    };
+    fetchProject();
   }, [project]);
 
   return (

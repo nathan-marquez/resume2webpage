@@ -61,13 +61,16 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const project = getProject();
-    if (
-      project &&
-      (project.uploadingFlag || project.deletingFlag || project.editingFlag)
-    ) {
-      router.push("/editor");
-    }
+    const fetchProject = async () => {
+      const project = await getProject();
+      if (
+        project &&
+        (project.uploadingFlag || project.deletingFlag || project.editingFlag)
+      ) {
+        router.push("/editor");
+      }
+    };
+    fetchProject();
   }, []);
 
   return (

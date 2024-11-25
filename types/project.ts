@@ -6,4 +6,5 @@ export interface Project {
   cssFile: string | null;
   htmlFile: string | null;
   jsFile: string | null;
+  editCount: number;
 }
