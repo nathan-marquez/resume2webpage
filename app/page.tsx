@@ -1,3 +1,5 @@
+"use client";
+
 import { UploadZone } from "@/components/home/UploadZone";
 import { Button } from "@/components/ui/button";
 import { TestAuthNav } from "@/components/test-auth-nav";
@@ -9,6 +11,9 @@ import {
   CheckCircle,
   ArrowRightCircle,
 } from "lucide-react";
+import { useEffect } from "react";
+import { getProject } from "@/lib/project";
+import { useRouter } from "next/navigation";
 
 interface PricingCardProps {
   title: string;
@@ -53,6 +58,18 @@ function PricingCard({
 }
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const project = getProject();
+    if (
+      project &&
+      (project.uploadingFlag || project.deletingFlag || project.editingFlag)
+    ) {
+      router.push("/editor");
+    }
+  }, []);
+
   return (
     <>
       <section className="relative bg-grid-pattern">
