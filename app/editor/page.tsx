@@ -1,11 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
 import { ChatInterface } from "@/components/editor/ChatInterface";
 import { PreviewPanel } from "@/components/editor/PreviewPanel";
 import { ProjectFile } from "@/types/project";
@@ -20,16 +15,11 @@ export default function EditorPage() {
   }, []);
 
   return (
-    <div className="h-[calc(100vh-4rem)]">
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={30} minSize={20} maxSize={50}>
-          <ChatInterface />
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={70} minSize={50}>
-          <PreviewPanel files={files} />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+    <div className="h-[calc(100vh-4rem)] relative">
+      <PreviewPanel files={files} />
+      <div className="absolute bottom-4 right-4 w-[400px]">
+        <ChatInterface setFiles={setFiles} />
+      </div>
     </div>
   );
 }
