@@ -48,9 +48,12 @@ export function Navigation() {
         <Link href="/" className="flex items-center space-x-2">
           <FileUp className="h-6 w-6" />
           <span className="font-bold">Resume2Webpage</span>
+          <span className="ml-2 inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 outline">
+            Beta
+          </span>
         </Link>
 
-        <NavigationMenu>
+        {/* <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
               <Link href="/templates" legacyBehavior passHref>
@@ -108,7 +111,7 @@ export function Navigation() {
               </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
-        </NavigationMenu>
+        </NavigationMenu> */}
 
         <div className="flex items-center space-x-4">
           {user ? (
