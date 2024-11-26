@@ -75,7 +75,7 @@ export default function Home() {
     };
 
     if (user) fetchProject();
-  }, []);
+  }, [user]);
 
   return (
     <>

@@ -26,6 +26,17 @@ export function PreviewPanel({ project }: PreviewPanelProps) {
     fetchProject();
   }, [project]);
 
+  const handleDownload = () => {
+    const projectFile = `${project.htmlFile}<style>${project.cssFile}</style><script>${project.jsFile}</script>`;
+    const blob = new Blob([projectFile], { type: "text/plain" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "index.html";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b p-4">
@@ -51,7 +62,7 @@ export function PreviewPanel({ project }: PreviewPanelProps) {
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Reset
               </Button>
-              <Button size="sm">
+              <Button size="sm" onClick={handleDownload}>
                 <Download className="mr-2 h-4 w-4" />
                 Download
               </Button>
