@@ -46,7 +46,7 @@ export default function EditorPage() {
         <>
           <PreviewPanel project={project} />
           <div className="absolute bottom-4 right-4 w-[400px]">
-            <ChatInterface setProject={setProject} />
+            <ChatInterface project={project} setProject={setProject} />
           </div>
         </>
       ) : (

@@ -12,6 +12,7 @@ import {
 import { useEffect } from "react";
 import { getProject } from "@/lib/project";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 interface PricingCardProps {
   title: string;
@@ -57,18 +58,23 @@ function PricingCard({
 
 export default function Home() {
   const router = useRouter();
+  const { user } = useAuth();
 
+  // Redirect to editor if user is logged in and has a project,
+  // or is in the middle of uploading a project
   useEffect(() => {
     const fetchProject = async () => {
       const project = await getProject();
       if (
         project &&
-        !(project.uploadingFlag || project.deletingFlag || project.editingFlag)
+        (project.uploadingFlag ||
+          (project.cssFile && project.jsFile && project.htmlFile))
       ) {
         router.push("/editor");
       }
     };
-    fetchProject();
+
+    if (user) fetchProject();
   }, []);
 
   return (

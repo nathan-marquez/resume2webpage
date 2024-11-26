@@ -7,26 +7,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { EditLimitModal } from "@/components/modals/EditLimitModal";
 import { Project } from "@/types/project";
+import { editProject } from "@/lib/project";
 
 interface ChatInterfaceProps {
+  project: Project;
   setProject: (project: Project) => void;
 }
 
-export function ChatInterface({ setProject }: ChatInterfaceProps) {
+export function ChatInterface({ project, setProject }: ChatInterfaceProps) {
   const [input, setInput] = useState("");
   const [showEditLimitModal, setShowEditLimitModal] = useState(false);
   const { user } = useAuth();
 
-  const handleSend = () => {
+  const handleSendEdit = async () => {
     if (!input.trim()) return;
 
-    // if (user?.editsRemaining === 0) {
-    //   setShowEditLimitModal(true);
-    //   return;
-    // }
+    if (project.editCount === 0) {
+      setShowEditLimitModal(true);
+      return;
+    }
+    editProject(input.trim())
+      .then((newProject) => setProject(newProject))
+      .catch(console.error);
 
-    // decrementEdits();
-    // Handle the edit request here
     setInput("");
   };
 
@@ -42,20 +45,20 @@ export function ChatInterface({ setProject }: ChatInterfaceProps) {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                handleSend();
+                handleSendEdit();
               }
             }}
           />
-          <Button onClick={handleSend} className="px-3">
+          <Button onClick={handleSendEdit} className="px-3">
             <Send className="h-4 w-4" />
           </Button>
         </div>
         <div className="text-center text-sm text-muted-foreground">
-          {/* {user && (
+          {user && (
             <p>
-              Edits remaining: {user.editsRemaining}/{user.totalEdits}
+              Edits remaining: {project.editCount}/{5}
             </p>
-          )} */}
+          )}
         </div>
       </div>
       <EditLimitModal
