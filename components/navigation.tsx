@@ -24,8 +24,10 @@ import {
 import { useToast } from "@/hooks/useToast";
 import { ComingSoonModal } from "@/components/modals/ComingSoonModal";
 import { AuthMode } from "@/types/auth";
+import { useRouter } from "next/navigation";
 
 export function Navigation() {
+  const router = useRouter();
   const pathname = usePathname();
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
   const { user, logout, login } = useAuth();
@@ -41,6 +43,24 @@ export function Navigation() {
   //     });
   //   }
   // };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Logout successful",
+        description: "See you soon!",
+      });
+      router.push("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        title: "Logout failed",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -125,7 +145,7 @@ export function Navigation() {
                   Premium
                 </Button>
               </Link>
-              <Button variant="ghost" onClick={logout}>
+              <Button variant="ghost" onClick={handleLogout}>
                 Log out
               </Button>
             </>

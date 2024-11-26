@@ -1,8 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { User, AuthResponse } from "@/types/auth";
-import { logout as logoutApi, loginWithGoogle } from "@/lib/auth";
+import {
+  logout as logoutApi,
+  loginWithGoogle,
+  onAuthStateChanged,
+} from "@/lib/auth";
 import { useToast } from "@/hooks/useToast";
 
 interface AuthContextType {
@@ -16,6 +20,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    onAuthStateChanged((user: User | null) => {
+      if (user) {
+        setUser(user);
+        toast({
+          title: "Login successful",
+          description: "Welcome back!",
+        });
+      }
+    });
+  }, []);
 
   // Update the login method
   const login = async () => {
