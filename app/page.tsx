@@ -1,8 +1,6 @@
 "use client";
 
 import { UploadZone } from "@/components/home/UploadZone";
-import { Button } from "@/components/ui/button";
-import { TestAuthNav } from "@/components/test-auth-nav";
 
 import {
   Wand2,
@@ -65,7 +63,7 @@ export default function Home() {
       const project = await getProject();
       if (
         project &&
-        (project.uploadingFlag || project.deletingFlag || project.editingFlag)
+        !(project.uploadingFlag || project.deletingFlag || project.editingFlag)
       ) {
         router.push("/editor");
       }
@@ -161,5 +159,3 @@ export default function Home() {
     </>
   );
 }
-
-
