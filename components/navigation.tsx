@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useAuthModal } from "@/components/providers/modals/AuthModalProvider";
 import { useState } from "react";
 import { useAuth } from "./providers/AuthProvider";
 import {
@@ -28,8 +27,6 @@ import { AuthMode } from "@/types/auth";
 
 export function Navigation() {
   const pathname = usePathname();
-  const { showAuthModal } = useAuthModal();
-  const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.LOGIN);
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
   const { user, logout, login } = useAuth();
   const { toast } = useToast();
@@ -131,12 +128,7 @@ export function Navigation() {
             </>
           ) : (
             <>
-              <Button
-                variant="ghost"
-                onClick={() => login()}
-              >
-                Log in with Google
-              </Button>
+              <Button onClick={() => login()}>Log in with Google</Button>
             </>
           )}
         </div>

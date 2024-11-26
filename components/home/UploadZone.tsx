@@ -7,18 +7,18 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { useAuthModal } from "@/components/providers/modals/AuthModalProvider";
+import { useToast } from "@/hooks/useToast";
 
 import { AuthMode } from "@/types/auth";
 import { uploadResume } from "@/lib/resume";
 
 export function UploadZone() {
   const router = useRouter();
+  const { toast } = useToast();
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const { showAuthModal } = useAuthModal();
-  const { user, setHasUploadedResume } = useAuth(); //TODO: Remove setHasUploadedResume
+  const { user, login } = useAuth(); //TODO: Remove setHasUploadedResume
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -42,9 +42,20 @@ export function UploadZone() {
         setProgress(progress);
       });
 
-      setHasUploadedResume(true);
       if (!user) {
-        showAuthModal(AuthMode.LOGIN, true);
+        login()
+          .then(() => {
+            if (user) {
+              router.push("/editor");
+            } else {
+              toast({
+                title: "Login failed",
+                description: "Please try again",
+                variant: "destructive",
+              });
+            }
+          })
+          .catch(console.error);
       } else {
         router.push("/editor");
       }
@@ -74,13 +85,13 @@ export function UploadZone() {
 
   return (
     <>
-      {user && (
+      {/* {user && (
         <div className="text-center mb-4">
           <p className="text-sm font-medium text-muted-foreground">
             Edits remaining: {user.editsRemaining}/{user.totalEdits}
           </p>
         </div>
-      )}
+      )} */}
       <div
         className={cn(
           "relative rounded-lg border-2 border-dashed p-12 text-center",

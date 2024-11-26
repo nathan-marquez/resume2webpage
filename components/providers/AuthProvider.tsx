@@ -2,10 +2,8 @@
 
 import { createContext, useContext, useState } from "react";
 import { User, AuthResponse } from "@/types/auth";
-import {
-  logout as logoutApi,
-  loginWithGoogle,
-} from "@/lib/auth";
+import { logout as logoutApi, loginWithGoogle } from "@/lib/auth";
+import { useToast } from "@/hooks/useToast";
 
 interface AuthContextType {
   user: User | null;
@@ -16,6 +14,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
 
   // Update the login method
@@ -24,9 +23,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data: AuthResponse = await loginWithGoogle();
       setUser(data.user);
       localStorage.setItem("token", data.token);
+      toast({
+        title: "Login successful",
+        description: "Welcome to Resume2Webpage!",
+      });
     } catch (error) {
-      console.error("Login error:", error);
-      throw error;
+      if (
+        error instanceof Error &&
+        error.message != "Firebase: Error (auth/popup-closed-by-user)."
+      ) {
+        console.error("Login error:", error, error.cause, error.message);
+        console.error("error", error);
+        console.error("error.cause", error.cause);
+        console.error("error.message", error.message);
+        console.error("error.name", error.name);
+
+        toast({
+          title: "Login failed",
+          description:
+            error instanceof Error ? error.message : "Please try again",
+          variant: "destructive",
+        });
+        throw error;
+      }
     }
   };
 
@@ -39,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await logoutApi();
 
       // Clear local state
-      setUser(null); 
+      setUser(null);
     } catch (error) {
       console.error("Logout error:", error);
       throw error;

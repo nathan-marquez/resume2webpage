@@ -15,17 +15,17 @@ interface ChatInterfaceProps {
 export function ChatInterface({ setProject }: ChatInterfaceProps) {
   const [input, setInput] = useState("");
   const [showEditLimitModal, setShowEditLimitModal] = useState(false);
-  const { user, decrementEdits } = useAuth();
+  const { user } = useAuth();
 
   const handleSend = () => {
     if (!input.trim()) return;
 
-    if (user?.editsRemaining === 0) {
-      setShowEditLimitModal(true);
-      return;
-    }
+    // if (user?.editsRemaining === 0) {
+    //   setShowEditLimitModal(true);
+    //   return;
+    // }
 
-    decrementEdits();
+    // decrementEdits();
     // Handle the edit request here
     setInput("");
   };
@@ -51,11 +51,11 @@ export function ChatInterface({ setProject }: ChatInterfaceProps) {
           </Button>
         </div>
         <div className="text-center text-sm text-muted-foreground">
-          {user && (
+          {/* {user && (
             <p>
               Edits remaining: {user.editsRemaining}/{user.totalEdits}
             </p>
-          )}
+          )} */}
         </div>
       </div>
       <EditLimitModal
