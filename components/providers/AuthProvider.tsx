@@ -3,18 +3,14 @@
 import { createContext, useContext, useState } from "react";
 import { User, AuthResponse } from "@/types/auth";
 import {
-  login as loginApi,
-  register as registerApi,
   logout as logoutApi,
+  loginWithGoogle,
 } from "@/lib/auth";
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  login: () => Promise<void>;
   logout: () => Promise<void>;
-  setHasUploadedResume: (value: boolean) => void; // TODO: This should be removed later
-  decrementEdits: () => Promise<void>; // TODO: This should be removed later
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,26 +18,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
-  const login = async (email: string, password: string) => {
+  // Update the login method
+  const login = async () => {
     try {
-      const data: AuthResponse = await loginApi(email, password);
-
+      const data: AuthResponse = await loginWithGoogle();
       setUser(data.user);
       localStorage.setItem("token", data.token);
     } catch (error) {
       console.error("Login error:", error);
-      throw error;
-    }
-  };
-
-  const register = async (email: string, password: string) => {
-    try {
-      const data: AuthResponse = await registerApi(email, password);
-
-      setUser(data.user);
-      localStorage.setItem("token", data.token);
-    } catch (error) {
-      console.error("Registration error:", error);
       throw error;
     }
   };
@@ -51,35 +35,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Get token from localStorage
       const token = localStorage.getItem("token");
 
-      // Call logout endpoint
-      await logoutApi(token);
+      // Call logout endpoint without token parameter
+      await logoutApi();
 
       // Clear local state
-      setUser(null);
-
-      // Remove token from localStorage
-      localStorage.removeItem("token");
+      setUser(null); 
     } catch (error) {
       console.error("Logout error:", error);
-      // Still clear local state even if API call fails
-      setUser(null);
-      localStorage.removeItem("token");
-    }
-  };
-
-  const setHasUploadedResume = (value: boolean) => {
-    if (user) {
-      setUser({ ...user, resumeUploaded: value });
-    }
-  };
-
-  // This should be removed later
-  const decrementEdits = async () => {
-    if (user?.editsRemaining && user.editsRemaining > 0) {
-      setUser({
-        ...user,
-        editsRemaining: user.editsRemaining - 1,
-      });
+      throw error;
     }
   };
 
@@ -88,10 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         login,
-        register,
         logout,
-        setHasUploadedResume,
-        decrementEdits,
       }}
     >
       {children}

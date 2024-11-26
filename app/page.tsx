@@ -1,5 +1,7 @@
 import { UploadZone } from "@/components/home/UploadZone";
 import { Button } from "@/components/ui/button";
+import { TestAuthNav } from "@/components/test-auth-nav";
+
 import {
   Wand2,
   Zap,
@@ -139,3 +141,5 @@ export default function Home() {
     </>
   );
 }
+
+

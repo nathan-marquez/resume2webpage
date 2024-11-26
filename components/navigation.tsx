@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAuthModal } from "@/components/providers/modals/AuthModalProvider";
 import { useState } from "react";
-import { useAuth } from "@/components/providers/AuthProvider";
+import { useAuth } from "./providers/AuthProvider";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -31,19 +31,19 @@ export function Navigation() {
   const { showAuthModal } = useAuthModal();
   const [authMode, setAuthMode] = useState<AuthMode>(AuthMode.LOGIN);
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, login } = useAuth();
   const { toast } = useToast();
 
-  const handleEditorClick = (e: React.MouseEvent) => {
-    if (!user?.resumeUploaded) {
-      e.preventDefault();
-      toast({
-        title: "Upload Required",
-        description: "Please upload your resume first.",
-        variant: "destructive",
-      });
-    }
-  };
+  // const handleEditorClick = (e: React.MouseEvent) => {
+  //   if (!user?.resumeUploaded) {
+  //     e.preventDefault();
+  //     toast({
+  //       title: "Upload Required",
+  //       description: "Please upload your resume first.",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -88,7 +88,7 @@ export function Navigation() {
                 <Link href="/editor" legacyBehavior passHref>
                   <NavigationMenuLink
                     className={navigationMenuTriggerStyle()}
-                    onClick={handleEditorClick}
+                    // onClick={handleEditorClick}
                   >
                     <Edit3 className="mr-2 h-4 w-4" />
                     Editor
@@ -133,18 +133,9 @@ export function Navigation() {
             <>
               <Button
                 variant="ghost"
-                onClick={() => {
-                  showAuthModal(AuthMode.LOGIN);
-                }}
+                onClick={() => login()}
               >
-                Log in
-              </Button>
-              <Button
-                onClick={() => {
-                  showAuthModal(AuthMode.SIGNUP);
-                }}
-              >
-                Sign up
+                Log in with Google
               </Button>
             </>
           )}

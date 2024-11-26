@@ -1,68 +1,24 @@
-import { NextResponse } from "next/server";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
-// Mock database
-const mockUsers = [
-  {
-    id: "1",
-    email: "test@example.com",
-    password: "password123",
-    editsRemaining: 5,
-    totalEdits: 5,
-    resumeUploaded: false,
-  },
-];
+const provider = new GoogleAuthProvider();
 
-export async function POST(request: Request) {
-  // Ensure the request is a POST
-  if (request.method !== "POST") {
-    return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
-  }
-
-  try {
-    // Safely parse JSON
-    let body;
-    try {
-      body = await request.json();
-    } catch (e) {
-      console.error("Failed to parse JSON:", e);
-      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-    }
-    const { email, password } = body;
-
-    // Validate input
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
-      );
-    }
-
-    // Find user
-    const user = mockUsers.find((u) => u.email === email);
-
-    if (!user || user.password !== password) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
-
-    const response = {
-      user: {
-        email: user.email,
-        editsRemaining: user.editsRemaining,
-        totalEdits: user.totalEdits,
-        resumeUploaded: user.resumeUploaded,
-      },
-      token: "mock_jwt_token",
-    };
-
-    return NextResponse.json(response);
-  } catch (error) {
-    console.error("💥 Login error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
-}
+const auth = getAuth();
+signInWithPopup(auth, provider)
+  .then((result) => {
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential?.accessToken;
+    // The signed-in user info.
+    const user = result.user;
+    // IdP data available using getAdditionalUserInfo(result)
+    // ...
+  }).catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // The email of the user's account used.
+    const email = error.customData.email;
+    // The AuthCredential type that was used.
+    const credential = GoogleAuthProvider.credentialFromError(error);
+    // ...
+  });

@@ -1,54 +1,26 @@
-// util/auth.ts
-import { AuthResponse, User } from "@/types/auth";
+import { AuthResponse } from "@/types/auth";
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { auth } from "@/app/firebase/firebaseConfig";
 
-export const login = async (
-  email: string,
-  password: string
-): Promise<AuthResponse> => {
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || "Authentication failed");
+export const loginWithGoogle = async (): Promise<AuthResponse> => {
+  const provider = new GoogleAuthProvider();
+  
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential?.accessToken || '';
+    
+    return {
+      user: {
+        email: result.user.email || ''
+      },
+      token
+    };
+  } catch (error) {
+    throw error;
   }
-
-  return data;
 };
 
-export const register = async (
-  email: string,
-  password: string
-): Promise<AuthResponse> => {
-  const response = await fetch("/api/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error);
-  }
-
-  return response.json();
-};
-
-export const logout = async (token: string | null): Promise<void> => {
-  const response = await fetch("/api/auth/logout", {
-    method: "POST",
-    headers: {
-      Authorization: token ? `Bearer ${token}` : "",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Logout failed");
-  }
+export const logout = async (): Promise<void> => {
+  await signOut(auth);
 };
