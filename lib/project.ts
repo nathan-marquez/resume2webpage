@@ -610,3 +610,12 @@ export const editProject = async (editText: string): Promise<Project> => {
     }, 1000);
   });
 };
+
+export const resetProject = async (): Promise<void> => {
+  // Simulate API request
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 1000);
+  });
+};

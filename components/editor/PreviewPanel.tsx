@@ -7,12 +7,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResetConfirmModal } from "@/components/modals/ResetConfirmModal";
 import { Project } from "@/types/project";
 import { getProject } from "@/lib/project";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/useToast";
 
 interface PreviewPanelProps {
   project: Project;
 }
 
 export function PreviewPanel({ project }: PreviewPanelProps) {
+  const router = useRouter();
+  const { toast } = useToast();
   const [showResetModal, setShowResetModal] = useState(false);
 
   const [activeTab, setActiveTab] = useState("preview");
@@ -142,6 +146,7 @@ export function PreviewPanel({ project }: PreviewPanelProps) {
       <ResetConfirmModal
         open={showResetModal}
         onOpenChange={setShowResetModal}
+        project={project}
       />
     </div>
   );
