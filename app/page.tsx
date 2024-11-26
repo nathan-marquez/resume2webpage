@@ -135,7 +135,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section id="pricing" className="border-t bg-muted/40">
+      {/* <section id="pricing" className="border-t bg-muted/40">
         <div className="container max-w-6xl mx-auto px-4 py-16 md:py-24">
           <h2 className="mb-12 text-center text-3xl font-bold tracking-tighter sm:text-4xl">
             Pricing Plans
@@ -161,7 +161,7 @@ export default function Home() {
             />
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 }
