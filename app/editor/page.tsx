@@ -42,16 +42,18 @@ export default function EditorPage() {
   }, []);
 
   return (
-    <div className="mx-auto container h-[calc(100vh-4rem)] relative">
-      {project ? (
-        <>
-          <Toolbar project={project} setProject={setProject} />\
-        </>
-      ) : (
-        <>
-          <Loading />
-        </>
-      )}
+    <div className="bg-grid-pattern">
+      <div className="mx-auto container h-[calc(100vh-4rem)] relative">
+        {project ? (
+          <>
+            <Toolbar project={project} setProject={setProject} />
+          </>
+        ) : (
+          <>
+            <Loading />
+          </>
+        )}
+      </div>
     </div>
   );
 }

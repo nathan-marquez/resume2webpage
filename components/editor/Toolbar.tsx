@@ -45,36 +45,8 @@ export function Toolbar({ project, setProject }: ToolbarProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex justify-between border-b p-4">
+      <div className="flex justify-between border-b">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="flex justify-between items-center bg-blue-100">
-            <TabsList>
-              <TabsTrigger value="preview">
-                <Eye className="mr-2 h-4 w-4" />
-                Preview
-              </TabsTrigger>
-              <TabsTrigger value="code">
-                <Code2 className="mr-2 h-4 w-4" />
-                Code
-              </TabsTrigger>
-            </TabsList>
-            <ChatInterface project={project} setProject={setProject} />
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                onClick={() => setShowResetModal(true)}
-              >
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Reset
-              </Button>
-              <Button size="sm" onClick={handleDownload}>
-                <Download className="mr-2 h-4 w-4" />
-                Download
-              </Button>
-            </div>
-          </div>
           <TabsContent value="preview" className="mt-0">
             {activeFile && project ? (
               <div className="mt-4 border rounded-lg overflow-hidden bg-white">
@@ -98,7 +70,7 @@ export function Toolbar({ project, setProject }: ToolbarProps) {
           </TabsContent>
           <TabsContent value="code" className="mt-0">
             {activeFile && project ? (
-              <div className="mt-4 flex h-[calc(100vh-16rem)] overflow-scroll">
+              <div className="mt-4 flex h-[calc(100vh-16rem)] ">
                 <div className="w-48 border-r">
                   <div className="p-2">
                     <button
@@ -136,7 +108,7 @@ export function Toolbar({ project, setProject }: ToolbarProps) {
                     </button>
                   </div>
                 </div>
-                <div className="flex-1 p-4 bg-gray-50">
+                <div className="flex-1 p-4 bg-gray-50 overflow-scroll">
                   <pre className="text-sm">
                     <code>{activeFile}</code>
                   </pre>
@@ -144,6 +116,34 @@ export function Toolbar({ project, setProject }: ToolbarProps) {
               </div>
             ) : null}
           </TabsContent>
+          <div className="flex justify-between items-center">
+            <TabsList>
+              <TabsTrigger value="preview">
+                <Eye className="mr-2 h-4 w-4" />
+                Preview
+              </TabsTrigger>
+              <TabsTrigger value="code">
+                <Code2 className="mr-2 h-4 w-4" />
+                Code
+              </TabsTrigger>
+            </TabsList>
+            <ChatInterface project={project} setProject={setProject} />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={() => setShowResetModal(true)}
+              >
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reset
+              </Button>
+              <Button size="sm" onClick={handleDownload}>
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </Button>
+            </div>
+          </div>
         </Tabs>
       </div>
       <ResetConfirmModal
