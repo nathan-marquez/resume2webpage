@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChatInterface } from "@/components/editor/ChatInterface";
-import { PreviewPanel } from "@/components/editor/PreviewPanel";
 import { Project } from "@/types/project";
 import { getProject } from "@/lib/project";
 import { useRouter } from "next/navigation";
