@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { EditLimitModal } from "@/components/modals/EditLimitModal";
 import { Project } from "@/types/project";
@@ -34,33 +34,36 @@ export function ChatInterface({ project, setProject }: ChatInterfaceProps) {
   };
 
   return (
-    <div className="bg-background border rounded-lg shadow-lg">
-      <div className="p-4 space-y-4">
-        <div className="flex space-x-2">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Describe your customization request..."
-            className="min-h-[60px]"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSendEdit();
-              }
-            }}
-          />
+    // <div className="bg-background/95 border rounded-lg shadow-lg m-2 outline outline-primary">
+    <div className="p-4 space-y-4 w-full">
+      <div className="flex space-x-2">
+        <Input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Describe your customization request..."
+          // className="min-h-[3em] w-full" // Updated to make it wider and limit height
+          // style={{ height: "1em" }} // Set height to accommodate 2 lines
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSendEdit();
+            }
+          }}
+        />
+        <div>
           <Button onClick={handleSendEdit} className="px-3">
             <Send className="h-4 w-4" />
           </Button>
-        </div>
-        <div className="text-center text-sm text-muted-foreground">
-          {user && (
-            <p>
-              Edits remaining: {project.editCount}/{5}
-            </p>
-          )}
+          {/* <div className="text-xs text-muted-foreground">
+            {user && (
+              <p>
+                {project.editCount}/{5} Edits
+              </p>
+            )}
+          </div> */}
         </div>
       </div>
+      {/* </div> */}
       <EditLimitModal
         open={showEditLimitModal}
         onOpenChange={setShowEditLimitModal}

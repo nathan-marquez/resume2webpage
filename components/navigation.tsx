@@ -64,11 +64,11 @@ export function Navigation() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between max-w-6xl mx-auto px-4">
+      <div className="mx-auto container flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
           <FileUp className="h-6 w-6" />
           <span className="font-bold">Resume2Webpage</span>
-          <span className="ml-2 inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 outline">
+          <span className="ml-2 inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-primary outline">
             Beta
           </span>
         </Link>

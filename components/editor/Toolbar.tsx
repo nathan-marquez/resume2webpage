@@ -9,12 +9,14 @@ import { Project } from "@/types/project";
 import { getProject } from "@/lib/project";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/useToast";
+import { ChatInterface } from "@/components/editor/ChatInterface";
 
-interface PreviewPanelProps {
+interface ToolbarProps {
   project: Project;
+  setProject: (project: Project) => void;
 }
 
-export function PreviewPanel({ project }: PreviewPanelProps) {
+export function Toolbar({ project, setProject }: ToolbarProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [showResetModal, setShowResetModal] = useState(false);
@@ -45,7 +47,7 @@ export function PreviewPanel({ project }: PreviewPanelProps) {
     <div className="flex h-full flex-col">
       <div className="flex justify-between border-b p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center bg-blue-100">
             <TabsList>
               <TabsTrigger value="preview">
                 <Eye className="mr-2 h-4 w-4" />
@@ -56,6 +58,7 @@ export function PreviewPanel({ project }: PreviewPanelProps) {
                 Code
               </TabsTrigger>
             </TabsList>
+            <ChatInterface project={project} setProject={setProject} />
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"

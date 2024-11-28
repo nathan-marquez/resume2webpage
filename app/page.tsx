@@ -1,6 +1,7 @@
 "use client";
 
 import { UploadZone } from "@/components/home/UploadZone";
+import { Footer } from "@/components/Footer";
 
 import {
   Wand2,
@@ -162,6 +163,7 @@ export default function Home() {
           </div>
         </div>
       </section> */}
+      <Footer />
     </>
   );
 }

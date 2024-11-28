@@ -7,6 +7,7 @@ import { Project } from "@/types/project";
 import { getProject } from "@/lib/project";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/editor/loading";
+import { Toolbar } from "@/components/editor/Toolbar";
 
 export default function EditorPage() {
   const router = useRouter();
@@ -41,13 +42,10 @@ export default function EditorPage() {
   }, []);
 
   return (
-    <div className="h-[calc(100vh-4rem)] relative">
+    <div className="mx-auto container h-[calc(100vh-4rem)] relative">
       {project ? (
         <>
-          <PreviewPanel project={project} />
-          <div className="absolute bottom-4 right-4 w-[400px]">
-            <ChatInterface project={project} setProject={setProject} />
-          </div>
+          <Toolbar project={project} setProject={setProject} />\
         </>
       ) : (
         <>
