@@ -1,23 +1,26 @@
-export const extractTextFromPdf = async (file: File): Promise<string> => {
-  return "test";
-};
+import { auth } from "@/app/firebase/firebaseConfig"; // Import Firebase auth
+import { getAuth } from "firebase/auth";
 
-export type UploadProgress = (progress: number) => void;
+export const uploadResume = async (file: File): Promise<void> => {
+  const user = auth.currentUser; // Get the current user
+  if (!user) {
+    throw new Error("User is not authenticated");
+  }
 
-export const uploadResume = async (
-  file: File,
-  onProgress?: UploadProgress
-): Promise<{ resumeId: string }> => {
-  try {
-    // Simulate upload progress
-    for (let progress = 0; progress <= 100; progress += 10) {
-      onProgress?.(progress);
-      await new Promise((resolve) => setTimeout(resolve, 200));
-    }
+  const token = await user.getIdToken(); // Get the token
 
-    return { resumeId: "testID" };
-  } catch (error) {
-    console.error("Resume upload error:", error);
-    throw error;
+  const formData = new FormData();
+  formData.append("resume", file);
+
+  const response = await fetch("/api/resume/upload", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to upload resume");
   }
 };

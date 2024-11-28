@@ -12,20 +12,20 @@ export const metadata: Metadata = {
   title: "Resume2Webpage - Transform Your Resume into a Beautiful Website",
   description:
     "Convert your resume into a personalized portfolio website instantly. No coding required.",
-  openGraph: {
-    title: "Resume2Webpage - Transform Your Resume into a Beautiful Website",
-    description:
-      "Convert your resume into a personalized portfolio website instantly. No coding required.",
-    url: "https://resume2webpage.com",
-    siteName: "Resume2Webpage",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Resume2Webpage - Transform Your Resume into a Beautiful Website",
-    description:
-      "Convert your resume into a personalized portfolio website instantly. No coding required.",
-  },
+  // openGraph: {
+  //   title: "Resume2Webpage - Transform Your Resume into a Beautiful Website",
+  //   description:
+  //     "Convert your resume into a personalized portfolio website instantly. No coding required.",
+  //   url: "https://resume2webpage.com",
+  //   siteName: "Resume2Webpage",
+  //   type: "website",
+  // },
+  // twitter: {
+  //   card: "summary_large_image",
+  //   title: "Resume2Webpage - Transform Your Resume into a Beautiful Website",
+  //   description:
+  //     "Convert your resume into a personalized portfolio website instantly. No coding required.",
+  // },
 };
 
 export default function RootLayout({

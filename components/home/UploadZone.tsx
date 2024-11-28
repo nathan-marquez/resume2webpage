@@ -38,14 +38,12 @@ export function UploadZone() {
 
     try {
       setIsUploading(true);
-      await uploadResume(file, (progress) => {
-        setProgress(progress);
-      });
 
       if (!user) {
         login()
-          .then(() => {
+          .then(async () => {
             if (user) {
+              await uploadResume(file);
               router.push("/editor");
             } else {
               toast({
