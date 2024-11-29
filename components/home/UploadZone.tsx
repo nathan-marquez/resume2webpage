@@ -55,6 +55,7 @@ export function UploadZone() {
           })
           .catch(console.error);
       } else {
+        await uploadResume(file);
         router.push("/editor");
       }
     } catch (error) {
