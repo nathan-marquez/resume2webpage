@@ -534,7 +534,7 @@ export const editProject = async (editText: string): Promise<Project> => {
   formData.append("editText", editText);
 
   const response = await fetch("/api/project/edit", {
-    method: "POST",
+    method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
     },
