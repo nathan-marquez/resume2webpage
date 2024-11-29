@@ -514,6 +514,7 @@ export const getProject = async (): Promise<Project> => {
 
   const token = await user.getIdToken(); // Get the token
   const response = await fetch("/api/project/get", {
+    method: "GET",
     headers: {
       Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
     },
@@ -523,13 +524,24 @@ export const getProject = async (): Promise<Project> => {
 };
 
 export const editProject = async (editText: string): Promise<Project> => {
-  // Simulate API request
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      PROJECT.editCount -= 1;
-      resolve(EDITED_PROJECT);
-    }, 1000);
+  const user = auth.currentUser; // Get the current user
+  if (!user) {
+    throw new Error("User is not authenticated");
+  }
+
+  const token = await user.getIdToken(); // Get the token
+  const formData = new FormData();
+  formData.append("editText", editText);
+
+  const response = await fetch("/api/project/edit", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+    },
+    body: formData,
   });
+  const project = response.json();
+  return project;
 };
 
 export const resetProject = async (): Promise<void> => {

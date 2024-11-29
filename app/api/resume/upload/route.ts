@@ -18,51 +18,75 @@ export async function POST(req: NextRequest) {
   try {
     // 1. Parse the pdf resume file into a string
     console.log("called parsePdf");
-    const resumeText = await parsePdf(req);
-    console.log("1. resumeText", resumeText);
+    const formData = await req.formData();
+    const file = formData.get("resume") as File;
+    const resumeText = await pdfParser(file);
 
-    // 2. Get the user project in firestore. If it doesn't exist, create it.
+    // 2. Get the user project in firestore
     const projectDocRef = firestore.collection("project").doc(user.uid);
     const projectDoc = await projectDocRef.get();
-    if (!projectDoc.exists) {
+
+    // 3. Assert that the project is not being edited, uploading, or deleting and that the edit count is greater than 0
+    let project: Project;
+    if (projectDoc.exists) {
+      project = projectDoc.data() as Project;
+    } else {
       const projectData = {
         editCount: 5,
-        uploadingFlag: true,
+        uploadingFlag: false,
         deletedFlag: false,
         editingFlag: false,
       };
       await projectDocRef.set(projectData);
+      project = (await projectDocRef.get()).data() as Project;
     }
-    console.log("2. projectDoc", projectDoc);
-    // 3. Call openai to generate the htmlFile, cssFile, and jsFile
-    const { htmlFile, cssFile, jsFile } = await generateFiles(resumeText);
-    console.log("3. htmlFile", htmlFile);
-    // 4. Update the project with the generated files
-    await projectDocRef.update({
-      htmlFile,
-      cssFile,
-      jsFile,
-      uploadingFlag: false,
-    });
-    console.log("4. projectDoc", projectDoc);
-    // 5. Return success with the project
-    const project: Project = (await projectDocRef.get()).data() as Project;
-    console.log("5. project", project);
 
-    return NextResponse.json(project, { status: 200 });
+    if (project.editingFlag || project.uploadingFlag || project.deletingFlag) {
+      return NextResponse.json(
+        { error: "Project is being edited, uploading, or deleting" },
+        { status: 400 }
+      );
+    }
+
+    if (project.editCount <= 0) {
+      return NextResponse.json({ error: "Edit count is 0" }, { status: 400 });
+    }
+
+    // 4. Set the project to uploadingFlag and attempt to generate the files
+    await projectDocRef.set({ uploadingFlag: true });
+    try {
+      // 5. Call openai to generate the htmlFile, cssFile, and jsFile
+      const { htmlFile, cssFile, jsFile } = await generateFiles(resumeText);
+
+      // 6. Update the local project with the generated files
+      project.htmlFile = htmlFile;
+      project.cssFile = cssFile;
+      project.jsFile = jsFile;
+
+      await projectDocRef.update({
+        htmlFile,
+        cssFile,
+        jsFile,
+        uploadingFlag: false,
+      });
+      // 7. Return success with the project
+      return NextResponse.json(project, { status: 200 });
+    } catch (error) {
+      // If there is an error, update the project to not be uploading
+      await projectDocRef.update({
+        uploadingFlag: false,
+      });
+      return NextResponse.json(
+        { error: "Internal server error during file generation: " + error },
+        { status: 500 }
+      );
+    }
   } catch (error) {
     return NextResponse.json(
       { error: "Internal server error: " + error },
       { status: 500 }
     );
   }
-}
-
-async function parsePdf(req: NextRequest): Promise<string> {
-  const formData = await req.formData();
-  const file = formData.get("resume") as File;
-  const pdfText = await pdfParser(file);
-  return pdfText;
 }
 
 async function pdfParser(file: File): Promise<string> {
