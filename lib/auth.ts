@@ -38,7 +38,7 @@ export const onAuthStateChanged = (
     if (!user) {
       callback(null);
     } else {
-      const userObj: User = { email: user.email || "" };
+      const userObj: User = { uid: user.uid, email: user.email || "" };
       callback(userObj);
     }
   });
