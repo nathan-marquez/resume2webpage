@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-// import { verify } from "firebase-admin/auth"; // Ensure you have firebase-admin set up
+import { firestore } from "@/server/firebase/firebaseAdmin";
+import { getUser } from "@/server/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get("Authorization")?.split(" ")[1]; // Extract token from the header
+  const user = await getUser(req);
 
-  if (!token) {
+  if (!user) {
     return NextResponse.json(
-      { error: "Authorization token missing or malformed" },
+      { error: "Authorization token missing or unauthorized" },
       { status: 401 }
     );
   }
@@ -17,13 +18,16 @@ export async function POST(req: NextRequest) {
 
     // Mock upload process (replace with actual upload logic to Firebase)
     // console.log("Resume uploaded for user:", decodedToken.uid);
-    console.log("Resume uploaded");
+    console.log("Resume uploaded for user:", user.uid);
 
     return NextResponse.json(
       { message: "Resume uploaded successfully" },
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json({ error: "Invalid token" }, { status: 403 });
+    return NextResponse.json(
+      { error: "Internal server error: " + error },
+      { status: 500 }
+    );
   }
 }

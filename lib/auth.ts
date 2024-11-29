@@ -17,6 +17,7 @@ export const loginWithGoogle = async (): Promise<AuthResponse> => {
 
     return {
       user: {
+        uid: result.user.uid,
         email: result.user.email || "",
       },
       token,
