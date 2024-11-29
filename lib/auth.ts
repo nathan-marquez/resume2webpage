@@ -5,7 +5,7 @@ import {
   signOut,
   onAuthStateChanged as onFirebaseAuthStateChanged,
 } from "firebase/auth";
-import { auth } from "@/app/firebase/firebaseConfig";
+import { auth } from "@/lib/firebase/firebaseClient";
 
 export const loginWithGoogle = async (): Promise<AuthResponse> => {
   const provider = new GoogleAuthProvider();

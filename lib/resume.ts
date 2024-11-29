@@ -1,4 +1,4 @@
-import { auth } from "@/app/firebase/firebaseConfig"; // Import Firebase auth
+import { auth } from "@/lib/firebase/firebaseClient"; // Import Firebase auth
 import { getAuth } from "firebase/auth";
 
 export const uploadResume = async (file: File): Promise<void> => {
