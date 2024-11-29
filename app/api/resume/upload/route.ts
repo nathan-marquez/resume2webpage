@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { firestore } from "@/server/firebase/firebaseAdmin";
 import { getUser } from "@/server/lib/auth";
 import { Project } from "@/types/project";
+import "@ungap/with-resolvers";
+import { getDocument } from "pdfjs-dist";
+
 export async function POST(req: NextRequest) {
   const user = await getUser(req);
 
@@ -14,6 +17,7 @@ export async function POST(req: NextRequest) {
 
   try {
     // 1. Parse the pdf resume file into a string
+    console.log("called parsePdf");
     const resumeText = await parsePdf(req);
     console.log("1. resumeText", resumeText);
 
@@ -54,15 +58,34 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function parsePdf(req: NextRequest) {
+async function parsePdf(req: NextRequest): Promise<string> {
   const formData = await req.formData();
   const file = formData.get("resume") as File;
-  const pdfText = await pdfToText(file);
+  const pdfText = await pdfParser(file);
   return pdfText;
 }
 
-async function pdfToText(file: File) {
-  return "pdfText";
+async function pdfParser(file: File): Promise<string> {
+  // @ts-ignore
+  await import("pdfjs-dist/build/pdf.worker.mjs");
+
+  const arrayBuffer = await file.arrayBuffer();
+  console.log("arrayBuffer", arrayBuffer);
+  const pdfDocument = await getDocument(arrayBuffer).promise;
+  console.log("pdfDocument", pdfDocument);
+  let extractedText = "";
+
+  // Loop through each page and extract text
+  for (let pageNumber = 1; pageNumber <= pdfDocument.numPages; pageNumber++) {
+    const page = await pdfDocument.getPage(pageNumber);
+    const textContent = await page.getTextContent();
+
+    // Extract text items
+    const pageText = textContent.items.map((item: any) => item.str).join(" ");
+    extractedText += pageText + "\n";
+  }
+
+  return extractedText;
 }
 
 async function generateFiles(resumeText: string) {
