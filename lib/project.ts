@@ -1,4 +1,5 @@
 import { Project } from "@/types/project";
+import { auth } from "@/lib/firebase/firebaseClient";
 
 const PROJECT: Project = {
   id: "1",
@@ -504,14 +505,21 @@ footer .links a:hover {
 });
 `,
 };
-//TODO: Add error case
-export const getProject = (): Promise<Project> => {
-  // Simulate API request
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(PROJECT);
-    }, 1000);
+
+export const getProject = async (): Promise<Project> => {
+  const user = auth.currentUser; // Get the current user
+  if (!user) {
+    throw new Error("User is not authenticated");
+  }
+
+  const token = await user.getIdToken(); // Get the token
+  const response = await fetch("/api/project/get", {
+    headers: {
+      Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+    },
   });
+  const project = response.json();
+  return project;
 };
 
 export const editProject = async (editText: string): Promise<Project> => {

@@ -71,8 +71,7 @@ export default function Home() {
         (project.uploadingFlag ||
           (project.cssFile && project.jsFile && project.htmlFile))
       ) {
-        // router.push("/editor");
-        console.log("pushing to editor");
+        router.push("/editor");
       }
     };
 
