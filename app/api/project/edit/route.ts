@@ -3,6 +3,9 @@ import { firestore } from "@/server/firebase/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { getUser } from "@/server/lib/auth";
 import { Project } from "@/types/project";
+import Anthropic from "@anthropic-ai/sdk";
+const anthropic = new Anthropic();
+
 
 export async function PATCH(req: NextRequest) {
   const user = await getUser(req);
@@ -101,9 +104,65 @@ async function generateFiles(
   updatedCssFile: string;
   updatedJsFile: string;
 }> {
-  return {
-    updatedHtmlFile: "edited html",
-    updatedCssFile: "edited css",
-    updatedJsFile: "edited js",
-  };
-}
+        console.log("Editing Files...")
+        const msg = await anthropic.messages.create({
+            model: "claude-3-5-sonnet-20241022",
+            max_tokens: 6000,
+            temperature: 0,
+            system: `You are being provided a portfolio website built from 3 files: html, css, and javascript. You will also be provided with an edit request to make to the website. You will also be provided with a resume that you may reference as you make edits to the website files.
+
+                EXTREMELY IMPORTANT:
+                - Respond **only** with a valid JSON object.
+                - Do not include any additional text or code formatting.
+                - Ensure all strings are properly escaped.
+
+                The JSON object should have the following structure:
+
+                {
+                    "htmlFile": "<full html file as a string>",
+                    "cssFile": "<full css file as a string>",
+                    "jsFile": "<full js file as a string>"
+                }
+                `,
+            messages: [
+                {
+                "role": "user",
+                "content": [
+                    {
+                    "type": "text",
+                    "text": "HTML File: " + htmlFile + "\n" + "CSS File" + cssFile + "\n" + "JS File" + jsFile + "\n" + "Edit Text" + editText 
+                    }
+                ]
+                }
+            ]
+            });
+            console.log("Claude's response:", msg);
+    
+            // Extract the text content from the response
+            let responseText;
+            const response = msg.content[0];
+        
+            if (response.type === 'text') {
+                responseText = response.text;
+            } else {
+                throw new Error('Unexpected response type from Claude');
+            }
+        
+            console.log("Response Text:", responseText);
+        
+            // Attempt to parse the responseText as JSON
+            try {
+                // Since Claude should now return valid JSON, parse it directly
+                const projectFile = JSON.parse(responseText);
+        
+                return {
+                    updatedHtmlFile: projectFile.htmlFile,
+                    updatedCssFile: projectFile.cssFile,
+                    updatedJsFile: projectFile.jsFile
+                };
+            } catch (error) {
+                console.error('Failed to parse response:', error);
+                throw new Error('Failed to parse response from Claude');
+            }
+        }
+    
