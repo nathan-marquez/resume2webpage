@@ -506,7 +506,7 @@ footer .links a:hover {
 `,
 };
 
-export const getProject = async (): Promise<Project> => {
+export const getProject = async (): Promise<Project | null> => {
   const user = auth.currentUser; // Get the current user
   if (!user) {
     throw new Error("User is not authenticated");
@@ -519,7 +519,13 @@ export const getProject = async (): Promise<Project> => {
       Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
     },
   });
-  const project = response.json();
+  if (response.status === 404) {
+    return null;
+  }
+  if (response.status !== 200) {
+    throw new Error("Failed to get project");
+  }
+  const project: Project = await response.json();
   return project;
 };
 
@@ -540,15 +546,27 @@ export const editProject = async (editText: string): Promise<Project> => {
     },
     body: formData,
   });
-  const project = response.json();
+  if (response.status !== 200) {
+    throw new Error("Failed to edit project");
+  }
+  const project: Project = await response.json();
   return project;
 };
 
 export const resetProject = async (): Promise<void> => {
-  // Simulate API request
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 1000);
+  const user = auth.currentUser; // Get the current user
+  if (!user) {
+    throw new Error("User is not authenticated");
+  }
+
+  const token = await user.getIdToken(); // Get the token
+  const response = await fetch("/api/project/delete", {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+    },
   });
+  if (response.status !== 200) {
+    throw new Error("Failed to delete project");
+  }
 };

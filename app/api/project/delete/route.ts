@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { firestore } from "@/server/firebase/firebaseAdmin";
 import { getUser } from "@/server/lib/auth";
+import { Project } from "@/types/project";
+import { FieldValue } from "firebase-admin/firestore";
 
 export async function DELETE(req: NextRequest): Promise<NextResponse> {
   const user = await getUser(req);
@@ -20,6 +22,17 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
     if (!projectDoc.exists) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
+    const project: Project = projectDoc.data() as Project;
+
+    if (project.editingFlag || project.uploadingFlag || project.deletingFlag) {
+      return NextResponse.json(
+        { error: "Project is being edited, uploading, or deleting" },
+        { status: 400 }
+      );
+    }
+    if (project.editCount <= 0) {
+      return NextResponse.json({ error: "Edit count is 0" }, { status: 400 });
+    }
 
     try {
       // 2. Set the deleting flag and delete the files
@@ -28,6 +41,7 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
         pdfFile: null,
         cssFile: null,
         deletingFlag: true,
+        editCount: FieldValue.increment(-1),
       });
 
       await projectDocRef.update({

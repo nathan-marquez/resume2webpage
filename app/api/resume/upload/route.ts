@@ -21,7 +21,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   try {
     // 1. Parse the pdf resume file into a string
-    console.log("called parsePdf");
     const formData = await req.formData();
     const file = formData.get("resume") as File;
     const resumeText = await pdfParser(file);
@@ -57,7 +56,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // 4. Set the project to uploadingFlag and attempt to generate the files
-    await projectDocRef.set({ uploadingFlag: true });
+    await projectDocRef.update({ uploadingFlag: true });
     try {
       // 5. Call openai to generate the htmlFile, cssFile, and jsFile
       const { htmlFile, cssFile, jsFile } = await generateFiles(resumeText);
@@ -73,6 +72,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         jsFile,
         uploadingFlag: false,
       });
+
       // 7. Return success with the project
       return NextResponse.json(project, { status: 200 });
     } catch (error) {
@@ -98,9 +98,7 @@ async function pdfParser(file: File): Promise<string> {
   await import("pdfjs-dist/build/pdf.worker.mjs");
 
   const arrayBuffer = await file.arrayBuffer();
-  console.log("arrayBuffer", arrayBuffer);
   const pdfDocument = await getDocument(arrayBuffer).promise;
-  console.log("pdfDocument", pdfDocument);
   let extractedText = "";
 
   // Loop through each page and extract text
