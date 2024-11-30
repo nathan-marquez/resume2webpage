@@ -8,7 +8,6 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const anthropic = new Anthropic();
 
-
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const user = await getUser(req);
 
@@ -77,6 +76,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(project, { status: 200 });
     } catch (error) {
       // If there is an error, update the project to not be uploading
+      console.error("Error during file generation:", error);
       await projectDocRef.update({
         uploadingFlag: false,
       });
@@ -86,6 +86,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
   } catch (error) {
+    console.error("Error during resume upload:", error);
     return NextResponse.json(
       { error: "Internal server error: " + error },
       { status: 500 }
@@ -115,12 +116,12 @@ async function pdfParser(file: File): Promise<string> {
 }
 
 async function generateFiles(resumeText: string) {
-    console.log("Generating Files...")
-    const msg = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
-        max_tokens: 6000,
-        temperature: 0,
-        system: `Using the information from my resume below, please create an aesthetic and modern personal website. The website should effectively showcase my skills, experience, education, and any projects or achievements mentioned in the resume.
+  console.log("Generating Files...");
+  const msg = await anthropic.messages.create({
+    model: "claude-3-5-sonnet-20241022",
+    max_tokens: 6000,
+    temperature: 0,
+    system: `Using the information from my resume below, please create an aesthetic and modern personal website. The website should effectively showcase my skills, experience, education, and any projects or achievements mentioned in the resume.
 
                 Requirements:
 
@@ -160,45 +161,44 @@ async function generateFiles(resumeText: string) {
                     "jsFile": "<full js file as a string>"
                 }
                 `,
-        messages: [
-            {
-            "role": "user",
-            "content": [
-                {
-                "type": "text",
-                "text": "My resume: " + resumeText,
-                }
-            ]
-            }
-        ]
-        });
-        console.log("Claude's response:", msg);
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: "My resume: " + resumeText,
+          },
+        ],
+      },
+    ],
+  });
+  console.log("Claude's response:", msg);
 
-        // Extract the text content from the response
-        let responseText;
-        const response = msg.content[0];
-    
-        if (response.type === 'text') {
-            responseText = response.text;
-        } else {
-            throw new Error('Unexpected response type from Claude');
-        }
-    
-        console.log("Response Text:", responseText);
-    
-        // Attempt to parse the responseText as JSON
-        try {
-            // Since Claude should now return valid JSON, parse it directly
-            const projectFile = JSON.parse(responseText);
-    
-            return {
-                htmlFile: projectFile.htmlFile,
-                cssFile: projectFile.cssFile,
-                jsFile: projectFile.jsFile
-            };
-        } catch (error) {
-            console.error('Failed to parse response:', error);
-            throw new Error('Failed to parse response from Claude');
-        }
-    }
+  // Extract the text content from the response
+  let responseText;
+  const response = msg.content[0];
 
+  if (response.type === "text") {
+    responseText = response.text;
+  } else {
+    throw new Error("Unexpected response type from Claude");
+  }
+
+  console.log("Response Text:", responseText);
+
+  // Attempt to parse the responseText as JSON
+  try {
+    // Since Claude should now return valid JSON, parse it directly
+    const projectFile = JSON.parse(responseText);
+
+    return {
+      htmlFile: projectFile.htmlFile,
+      cssFile: projectFile.cssFile,
+      jsFile: projectFile.jsFile,
+    };
+  } catch (error) {
+    console.error("Failed to parse response:", error);
+    throw new Error("Failed to parse response from Claude");
+  }
+}
