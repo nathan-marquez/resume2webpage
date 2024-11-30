@@ -38,7 +38,7 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
       // 2. Set the deleting flag and delete the files
       await projectDocRef.update({
         htmlFile: null,
-        pdfFile: null,
+        jsFile: null,
         cssFile: null,
         deletingFlag: true,
         editCount: FieldValue.increment(-1),
