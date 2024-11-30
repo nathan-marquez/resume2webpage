@@ -3,7 +3,7 @@ import { firestore } from "@/server/firebase/firebaseAdmin";
 import { getUser } from "@/server/lib/auth";
 import { Project } from "@/types/project";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<NextResponse> {
   const user = await getUser(req);
 
   if (!user) {
