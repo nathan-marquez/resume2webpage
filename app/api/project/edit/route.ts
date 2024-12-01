@@ -6,7 +6,6 @@ import { Project } from "@/types/project";
 import Anthropic from "@anthropic-ai/sdk";
 const anthropic = new Anthropic();
 
-
 export async function PATCH(req: NextRequest): Promise<NextResponse> {
   const user = await getUser(req);
 
@@ -104,65 +103,127 @@ async function generateFiles(
   updatedCssFile: string;
   updatedJsFile: string;
 }> {
-        console.log("Editing Files...")
-        const msg = await anthropic.messages.create({
-            model: "claude-3-5-sonnet-20241022",
-            max_tokens: 6000,
-            temperature: 0,
-            system: `You are being provided a portfolio website built from 3 files: html, css, and javascript. You will also be provided with an edit request to make to the website. You will also be provided with a resume that you may reference as you make edits to the website files.
+  console.log("Editing Files...");
+  const msg = await anthropic.messages.create({
+    model: "claude-3-5-sonnet-20241022",
+    max_tokens: 6000,
+    temperature: 0,
+    system: `You are being provided a portfolio website built from 3 files: HTML, CSS, and JavaScript. You will also be provided with an edit request to make to the website.
 
-                EXTREMELY IMPORTANT:
-                - Respond **only** with a valid JSON object.
-                - Do not include any additional text or code formatting.
-                - Ensure all strings are properly escaped.
+EXTREMELY IMPORTANT:
+- Respond **only** with a valid JSON object.
+- Do not include any additional text or code formatting.
+- Ensure all strings are properly escaped.
 
-                The JSON object should have the following structure:
+The JSON object should have the following structure:
 
-                {
-                    "htmlFile": "<full html file as a string>",
-                    "cssFile": "<full css file as a string>",
-                    "jsFile": "<full js file as a string>"
-                }
-                `,
-            messages: [
-                {
-                "role": "user",
-                "content": [
-                    {
-                    "type": "text",
-                    "text": "HTML File: " + htmlFile + "\n" + "CSS File" + cssFile + "\n" + "JS File" + jsFile + "\n" + "Edit Text" + editText 
-                    }
-                ]
-                }
-            ]
-            });
-            console.log("Claude's response:", msg);
-    
-            // Extract the text content from the response
-            let responseText;
-            const response = msg.content[0];
-        
-            if (response.type === 'text') {
-                responseText = response.text;
-            } else {
-                throw new Error('Unexpected response type from Claude');
-            }
-        
-            console.log("Response Text:", responseText);
-        
-            // Attempt to parse the responseText as JSON
-            try {
-                // Since Claude should now return valid JSON, parse it directly
-                const projectFile = JSON.parse(responseText);
-        
-                return {
-                    updatedHtmlFile: projectFile.htmlFile,
-                    updatedCssFile: projectFile.cssFile,
-                    updatedJsFile: projectFile.jsFile
-                };
-            } catch (error) {
-                console.error('Failed to parse response:', error);
-                throw new Error('Failed to parse response from Claude');
-            }
+{
+  "htmlChanges": [
+    {"find": "<string to find>", "replace": "<string to replace with>"},
+    ...
+  ],
+  "cssChanges": [
+    {"find": "<string to find>", "replace": "<string to replace with>"},
+    ...
+  ],
+  "jsChanges": [
+    {"find": "<string to find>", "replace": "<string to replace with>"},
+    ...
+  ]
+}
+
+Note:
+- We have no notion of line numbers; your 'find' strings should be unique enough to avoid accidental replacements.
+- Do not include any other text in your response.
+`,
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text:
+              "HTML File: " +
+              htmlFile +
+              "\n" +
+              "CSS File: " +
+              cssFile +
+              "\n" +
+              "JS File: " +
+              jsFile +
+              "\n" +
+              "Edit Text: " +
+              editText,
+          },
+        ],
+      },
+    ],
+  });
+  console.log("Claude's response:", msg);
+
+  // Extract the text content from the response
+  let responseText;
+  const response = msg.content[0];
+
+  if (response.type === "text") {
+    responseText = response.text;
+  } else {
+    throw new Error("Unexpected response type from Claude");
+  }
+
+  console.log("Response Text:", responseText);
+
+  // Attempt to parse the responseText as JSON
+  try {
+    const changes = JSON.parse(responseText);
+
+    let updatedHtmlFile = htmlFile;
+    let updatedCssFile = cssFile;
+    let updatedJsFile = jsFile;
+
+    // Apply HTML changes
+    if (changes.htmlChanges && Array.isArray(changes.htmlChanges)) {
+      for (const change of changes.htmlChanges) {
+        const { find, replace } = change;
+        if (updatedHtmlFile.includes(find)) {
+          updatedHtmlFile = updatedHtmlFile.replace(find, replace);
+        } else {
+          console.warn(`String to find not found in HTML file: ${find}`);
         }
-    
+      }
+    }
+
+    // Apply CSS changes
+    if (changes.cssChanges && Array.isArray(changes.cssChanges)) {
+      for (const change of changes.cssChanges) {
+        const { find, replace } = change;
+        if (updatedCssFile.includes(find)) {
+          updatedCssFile = updatedCssFile.replace(find, replace);
+        } else {
+          console.warn(`String to find not found in CSS file: ${find}`);
+        }
+      }
+    }
+
+    // Apply JS changes
+    if (changes.jsChanges && Array.isArray(changes.jsChanges)) {
+      for (const change of changes.jsChanges) {
+        const { find, replace } = change;
+        if (updatedJsFile.includes(find)) {
+          updatedJsFile = updatedJsFile.replace(find, replace);
+        } else {
+          console.warn(`String to find not found in JS file: ${find}`);
+        }
+      }
+    }
+
+    return {
+      updatedHtmlFile,
+      updatedCssFile,
+      updatedJsFile,
+    };
+  } catch (error) {
+    console.error("Failed to parse response:", error);
+    throw new Error("Failed to parse response from Claude");
+  }
+}
