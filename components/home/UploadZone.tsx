@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FileUp, File, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+// import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useToast } from "@/hooks/useToast";
@@ -107,7 +107,7 @@ export function UploadZone() {
             <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
             <div className="space-y-2">
               <p className="text-sm font-medium">Uploading your resume...</p>
-              <Progress value={progress} className="w-[60%] mx-auto" />
+              {/* <Progress value={progress} className="w-[60%] mx-auto" /> */}
             </div>
           </div>
         ) : (
